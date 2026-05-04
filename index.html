@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Happy Birthday, Insiya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:#080808;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:2rem 1rem;
+  font-family:'DM Sans',sans-serif;
+  overflow-x:hidden;
+}
+#bg-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+#card{background:rgba(13,13,13,0.92);border-radius:24px;width:100%;max-width:680px;position:relative;overflow:hidden;color:#f5f0e8;border:0.5px solid #2a2a2a;z-index:1;backdrop-filter:blur(2px);}
+.slide{display:none;padding:3.5rem 3rem 2.5rem;min-height:520px;flex-direction:column;justify-content:center;position:relative;}
+.slide.active{display:flex;}
+.slide-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;border-radius:24px;}
+.s1-tag{font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:#555;margin-bottom:1.6rem;font-weight:400;}
+.s1-name{font-family:'DM Serif Display',serif;font-size:64px;line-height:1;color:#f5f0e8;margin-bottom:0.4rem;}
+.s1-name span{color:#e8c07a;font-style:italic;}
+.s1-sub{font-size:16px;color:#888;font-weight:300;margin-bottom:3rem;letter-spacing:0.02em;}
+.s1-from{font-size:11px;color:#444;letter-spacing:0.15em;text-transform:uppercase;}
+.divider{width:40px;height:1px;background:#333;margin:1.2rem 0;}
+.slide-label{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#444;margin-bottom:2rem;}
+.big-q{font-family:'DM Serif Display',serif;font-size:28px;line-height:1.35;color:#f5f0e8;margin-bottom:1.4rem;}
+.big-q em{color:#e8c07a;font-style:italic;}
+.body-txt{font-size:13.5px;line-height:1.95;color:#888;font-weight:300;max-width:520px;}
+.body-txt strong{color:#d0c8b8;font-weight:500;}
+.pixel-art{display:grid;gap:2px;margin-top:1.8rem;}
+.px{width:10px;height:10px;border-radius:1px;}
+.spark-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1.4rem;}
+.spark-card{background:rgba(20,20,20,0.8);border:0.5px solid #222;border-radius:12px;padding:1rem 1.1rem;transition:border-color 0.3s;}
+.spark-card:hover{border-color:#e8c07a44;}
+.sc-label{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#444;margin-bottom:6px;}
+.sc-val{font-size:12.5px;color:#aaa;line-height:1.55;}
+.strength-bar{margin:6px 0 14px;}
+.sb-label{font-size:11px;color:#666;margin-bottom:5px;display:flex;justify-content:space-between;}
+.sb-label span:last-child{color:#e8c07a;}
+.sb-track{height:3px;background:#1a1a1a;border-radius:2px;overflow:hidden;}
+.sb-fill{height:100%;border-radius:2px;animation:growBar 1.4s ease forwards;width:0;}
+@keyframes growBar{to{width:var(--w);}}
+
+/* ── PING PONG GAME ── */
+#game-wrap{background:#0a0a0a;border-radius:12px;padding:1rem;margin:1rem 0;border:0.5px solid #1f1f1f;}
+#pp-canvas{display:block;border-radius:8px;width:100%;max-width:460px;margin:0 auto;cursor:none;}
+.game-score{font-size:11px;color:#444;text-align:center;margin-top:8px;letter-spacing:0.1em;}
+.game-hint{font-size:11px;color:#333;text-align:center;margin-top:4px;}
+.game-btn-row{display:flex;gap:8px;margin-top:0.6rem;}
+.gbtn{flex:1;background:transparent;border:0.5px solid #222;color:#666;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:8px 14px;border-radius:99px;cursor:pointer;transition:all 0.15s;}
+.gbtn:hover{border-color:#444;color:#f5f0e8;}
+
+.poem-wrap{max-width:520px;position:relative;}
+.poem-stanza{margin-bottom:1.6rem;}
+.poem-line{font-family:'DM Serif Display',serif;font-size:15.5px;line-height:1.85;color:#c8bfa8;display:block;opacity:0;transform:translateY(8px);transition:opacity 0.5s ease,transform 0.5s ease;}
+.poem-line.revealed{opacity:1;transform:translateY(0);}
+.poem-line em{color:#e8c07a;font-style:italic;}
+.poem-line strong{color:#f5f0e8;font-weight:400;}
+.letter-body{font-family:'DM Serif Display',serif;font-size:17px;line-height:1.9;color:#b0a898;max-width:520px;}
+.letter-body em{color:#e8c07a;font-style:italic;}
+.letter-sign{margin-top:2rem;font-size:12px;color:#444;letter-spacing:0.12em;}
+.letter-sign span{color:#666;}
+.nav-row{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 3rem 1.6rem;border-top:0.5px solid #161616;}
+.nav-dots{display:flex;gap:6px;align-items:center;}
+.ndot{width:5px;height:5px;border-radius:50%;background:#222;cursor:pointer;transition:all 0.2s;}
+.ndot.active{background:#e8c07a;transform:scale(1.4);}
+.nav-btn{background:transparent;border:0.5px solid #222;color:#666;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:8px 18px;border-radius:99px;cursor:pointer;transition:all 0.15s;}
+.nav-btn:hover{border-color:#444;color:#f5f0e8;}
+.nav-btn:disabled{opacity:0.15;cursor:default;}
+.slide{animation:none;}.slide.active{animation:slideIn 0.4s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* LOCK */
+#lockScreen{position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;z-index:9999;}
+.lock-title{font-size:18px;font-weight:500;color:#e8c07a;margin-bottom:15px;letter-spacing:1px;}
+.shine-text{font-family:'Great Vibes',cursive;font-size:26px;background:linear-gradient(90deg,#ffffff,#e8c07a,#ffffff);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shine 3s linear infinite;}
+@keyframes shine{0%{background-position:0% center;}100%{background-position:200% center;}}
+.lock-box{background:rgba(20,20,20,0.95);padding:30px;border-radius:16px;text-align:center;box-shadow:0 0 25px rgba(232,192,122,0.15);border:1px solid rgba(232,192,122,0.2);}
+#unlockInput{padding:10px;border-radius:8px;margin-bottom:10px;background:#1a1a1a;border:0.5px solid #333;color:#f5f0e8;width:100%;}
+.lock-box button{padding:8px 20px;background:#e8c07a;border:none;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;}
+#lockMsg{color:#888;font-size:12px;margin-top:8px;}
+
+/* SURPRISE */
+#surpriseScreen{position:fixed;inset:0;background:radial-gradient(circle,#111 20%,#000 100%);display:none;align-items:center;justify-content:center;z-index:9998;}
+.surprise-content{font-family:'Great Vibes',cursive;font-size:34px;color:#e8c07a;text-align:center;text-shadow:0 0 12px rgba(232,192,122,0.5);animation:glowText 2.5s ease-in-out infinite;letter-spacing:1px;}
+@keyframes glowText{0%,100%{text-shadow:0 0 12px rgba(232,192,122,0.5);}50%{text-shadow:0 0 30px rgba(232,192,122,0.9);}}
+
+.love-final{
+  margin-top:2rem;
+  text-align:center;
+}
+
+.love-img{
+  width:150px;
+  height:150px;
+  object-fit:cover;
+  border-radius:50%;
+  border:1.5px solid #e8c07a33;
+  box-shadow:0 0 12px #e8c07a22;
+}
+
+.love-text{
+  margin-top:0.8rem;
+  font-family:'Great Vibes', cursive;
+  font-size:26px;
+  color:#e8c07a;
+  letter-spacing:0.5px;
+  opacity:0.9;
+}
+
+@media(max-width:500px){
+  .slide{padding:2.5rem 1.5rem 2rem;}
+  .nav-row{padding:1rem 1.5rem 1.4rem;}
+  .s1-name{font-size:42px;}
+  .big-q{font-size:22px;}
+  .spark-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-title"><span class="shine-text">only she can unlock</span> 💛</div>
+    <input type="password" id="unlockInput" placeholder="enter secret..." />
+    <button onclick="unlockSite()">unlock</button>
+    <div id="lockMsg"></div>
+  </div>
+</div>
+
+<div id="surpriseScreen">
+  <div class="surprise-content">💛 happy 18 thrills 💛</div>
+</div>
+
+<canvas id="bg-canvas"></canvas>
+
+<div id="card">
+
+  <!-- S1 -->
+  <div class="slide active" id="s1">
+    <canvas class="slide-canvas" id="sc1"></canvas>
+    <div class="s1-tag">a birthday letter — made from real words</div>
+    <div class="s1-name">for <span>Insiya</span></div>
+    <div class="divider"></div>
+    <div class="s1-sub">oii 😂 bura na maano bidday hai 😘</div>
+    <div style="margin-top:3.5rem;">
+      <div class="s1-from">from Abdeali &nbsp;·&nbsp; with everything he has</div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="slide" id="s2">
+    <canvas class="slide-canvas" id="sc2"></canvas>
+    <div class="slide-label">slide 01 — who she is</div>
+    <div class="big-q">the girl who can yap for hours<br>and <em>still</em> be the most interesting person in the room.</div>
+    <div class="body-txt">
+      She lives for <strong>spicy chaat, angry girl energy</strong>, and the kind of conversations that never really end.
+      But underneath all that fire — she's understanding, caring, and quietly the strongest person you know.
+      The kind of woman who can be both <strong>the storm and the shelter</strong> at the same time.
+    </div>
+    <div class="pixel-art" id="chaatArt"></div>
+  </div>
+
+  <!-- S3 -->
+  <div class="slide" id="s3">
+    <canvas class="slide-canvas" id="sc3"></canvas>
+    <div class="slide-label">slide 02 — the quiet spark</div>
+    <div class="big-q">some connections don't need<br><em>constant proof.</em></div>
+    <div class="body-txt">No awkward silences after long gaps. Just laughs, tears, vibes — right where you left off.</div>
+    <div class="spark-grid">
+      <div class="spark-card"><div class="sc-label">even after distance</div><div class="sc-val">she picks up right where warmth was left</div></div>
+      <div class="spark-card"><div class="sc-label">even after fights</div><div class="sc-val">she comes back with laughter, not walls</div></div>
+      <div class="spark-card"><div class="sc-label">every single day</div><div class="sc-val">she keeps you in her prayers without announcement</div></div>
+      <div class="spark-card"><div class="sc-label">when you're low</div><div class="sc-val">she hides her own bad day to hold yours</div></div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="slide" id="s4">
+    <canvas class="slide-canvas" id="sc4"></canvas>
+    <div class="slide-label">slide 03 — what she carries</div>
+    <div class="big-q">she fights battles<br>no one even <em>sees.</em></div>
+    <div class="body-txt" style="margin-bottom:1.6rem;">
+      Hip, tailbone, back — a body that's been asked to carry too much.
+      The pain that comes every month that no man can truly measure.
+      And on top of all that — <strong>she carries your chaos too, with a smile.</strong>
+    </div>
+    <div class="strength-bar">
+      <div class="sb-label"><span>physical strength</span><span>relentless</span></div>
+      <div class="sb-track"><div class="sb-fill" style="--w:92%;background:#e8c07a;"></div></div>
+    </div>
+    <div class="strength-bar">
+      <div class="sb-label"><span>emotional endurance</span><span>extraordinary</span></div>
+      <div class="sb-track"><div class="sb-fill" style="--w:97%;background:#c07ae8;"></div></div>
+    </div>
+    <div class="strength-bar">
+      <div class="sb-label"><span>fighting for love</span><span>against all odds</span></div>
+      <div class="sb-track"><div class="sb-fill" style="--w:100%;background:#7ac0e8;"></div></div>
+    </div>
+  </div>
+
+  <!-- S5: PING PONG -->
+  <div class="slide" id="s5">
+    <div class="slide-label">slide 04 — ping pong 🏓</div>
+    <div class="big-q" style="font-size:22px;margin-bottom:0.3rem;">keep the 🎂 in the air, just for <em>her.</em></div>
+    <div class="body-txt" style="font-size:12px;margin-bottom:0.8rem;">← → arrow keys or tap sides · miss the ball and it's over · best score saved</div>
+    <div id="game-wrap">
+      <canvas id="pp-canvas" width="460" height="280"></canvas>
+      <div class="game-score">score: <span id="ppscore">0</span> &nbsp;·&nbsp; best: <span id="ppbest">0</span></div>
+      <div class="game-hint" id="pphint">tap canvas or press start</div>
+    </div>
+    <div class="game-btn-row">
+      <button class="gbtn" onclick="ppStart()">start</button>
+      <button class="gbtn" onclick="ppReset()">restart</button>
+    </div>
+  </div>
+
+  <!-- S6: Poem -->
+  <div class="slide" id="s6">
+    <canvas class="slide-canvas" id="sc6"></canvas>
+    <div class="poem-wrap">
+      <div style="font-family:'DM Serif Display',serif;font-size:26px;color:#f5f0e8;margin-bottom:0.3rem;line-height:1.2;">the girl who stayed<br><span style="font-style:italic;color:#e8c07a;font-size:20px;">& burned bright doing it</span></div>
+      <div style="width:32px;height:1px;background:#2a2a2a;margin:1rem 0 1.6rem;"></div>
+      <div class="poem-stanza">
+        <span class="poem-line">She carries the sky on a spine that aches,</span>
+        <span class="poem-line">yet never once lets the morning break —</span>
+        <span class="poem-line">a thousand storms live beneath her skin,</span>
+        <span class="poem-line">yet she opens the door and lets <em>you</em> in.</span>
+      </div>
+      <div class="poem-stanza">
+        <span class="poem-line">Distance is a thief, but she <strong>outran it</strong>,</span>
+        <span class="poem-line">silence between you two? she simply <em>banned it</em>.</span>
+        <span class="poem-line">No gap too wide, no pause too long —</span>
+        <span class="poem-line">she finds you again, where you belong.</span>
+      </div>
+      <div class="poem-stanza">
+        <span class="poem-line">Her laughter is <em>chaat on a summer street</em>,</span>
+        <span class="poem-line">fiery, familiar, impossibly sweet.</span>
+        <span class="poem-line">She is the spice the world forgot to name —</span>
+        <span class="poem-line">every room she enters is never the same.</span>
+      </div>
+      <div class="poem-stanza">
+        <span class="poem-line">She chose love when the world said <em>no</em>,</span>
+        <span class="poem-line">she chose <strong>you</strong> through every high and low.</span>
+        <span class="poem-line">Not because it was easy — it never was —</span>
+        <span class="poem-line">but because real love <em>never needed a cause</em>.</span>
+      </div>
+      <div class="poem-stanza">
+        <span class="poem-line">Happy birthday, Insiya — one hell of a soul,</span>
+        <span class="poem-line">you were never half a thing — always <em>whole</em>.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: Letter -->
+  <div class="slide" id="s7">
+    <canvas class="slide-canvas" id="sc7"></canvas>
+    <div class="slide-label">slide 06 — from Abdeali</div>
+    <div class="letter-body">
+      Insiya,<br><br>
+      You stayed when staying was the hardest thing to do.<br>
+      You prayed for me when I forgot to pray for myself.<br>
+      You hid your worst days to protect my worst days.<br><br>
+      When her parents said no — <em>you still chose.</em><br>
+      That's not small. That's everything.<br><br>
+      You are not just strong.<br>
+      You are the kind of strong that <em>holds other people up</em><br>
+      while quietly bleeding.<br><br>
+      Happy Birthday to one hell of a woman.<br>
+      You deserve more than words.<br>
+      But these are mine — from the bottom.
+    </div>
+    <div class="letter-sign">xo, <span>Abdeali</span></div>
+
+<div class="love-final">
+  <img src="insiya.jpg"  class="love-img">
+  <div class="love-text">luvyouinsuu...khuda tamari har ummeed puri kare-aameen. ❤️</div>
+</div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← prev</button>
+    <div class="nav-dots" id="navDots"></div>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">next →</button>
+  </div>
+</div>
+
+<script>
+/* ── GLOBAL BG ── */
+const bgC=document.getElementById('bg-canvas');
+const bgX=bgC.getContext('2d');
+function resizeBg(){bgC.width=window.innerWidth;bgC.height=window.innerHeight;}
+resizeBg();window.addEventListener('resize',resizeBg);
+const STARS=Array.from({length:120},()=>({
+  x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,
+  r:Math.random()*1.4+0.3,a:Math.random(),
+  da:(Math.random()*0.008+0.002)*(Math.random()<0.5?1:-1),
+  dx:(Math.random()-0.5)*0.15,dy:(Math.random()-0.5)*0.15,
+  col:['#e8c07a','#c07ae8','#7ac0e8','#ffffff','#e87ab0'][Math.floor(Math.random()*5)]
+}));
+const BOLTS=[];let boltTimer=0;
+function spawnBolt(){
+  const x=Math.random()*window.innerWidth;
+  const segs=[];let cx=x,cy=0;
+  const steps=8+Math.floor(Math.random()*6);
+  for(let i=0;i<steps;i++){cx+=(Math.random()-0.5)*60;cy+=window.innerHeight/steps;segs.push({x:cx,y:cy});}
+  BOLTS.push({segs,life:1,decay:0.06+Math.random()*0.04,col:['#e8c07a','#c07ae8','#7ac0e8','#fff'][Math.floor(Math.random()*4)]});
+}
+function drawBg(){
+  bgX.clearRect(0,0,bgC.width,bgC.height);
+  STARS.forEach(s=>{
+    s.x=(s.x+s.dx+bgC.width)%bgC.width;s.y=(s.y+s.dy+bgC.height)%bgC.height;
+    s.a+=s.da;if(s.a>1||s.a<0)s.da*=-1;
+    bgX.beginPath();bgX.arc(s.x,s.y,s.r,0,Math.PI*2);
+    bgX.fillStyle=s.col;bgX.globalAlpha=Math.max(0,Math.min(1,s.a));bgX.fill();
+  });
+  boltTimer++;if(boltTimer>90+Math.random()*60){boltTimer=0;spawnBolt();}
+  for(let i=BOLTS.length-1;i>=0;i--){
+    const b=BOLTS[i];
+    bgX.globalAlpha=b.life*0.7;bgX.strokeStyle=b.col;bgX.lineWidth=Math.ceil(b.life*2);
+    bgX.shadowBlur=8*b.life;bgX.shadowColor=b.col;
+    bgX.beginPath();bgX.moveTo(b.segs[0].x,0);b.segs.forEach(s=>bgX.lineTo(s.x,s.y));bgX.stroke();
+    bgX.shadowBlur=0;b.life-=b.decay;if(b.life<=0)BOLTS.splice(i,1);
+  }
+  bgX.globalAlpha=1;requestAnimationFrame(drawBg);
+}
+drawBg();
+
+/* ── SLIDE CANVAS EFFECTS ── */
+const slideEffects={};
+function initSlideCanvas(id,type){
+  if(slideEffects[id])return;
+  const cv=document.getElementById('sc'+id);if(!cv)return;
+  const ctx=cv.getContext('2d');const particles=[];let raf;
+  function resize(){cv.width=cv.offsetWidth;cv.height=cv.offsetHeight;}resize();
+  if(type==='sparkle'){
+    for(let i=0;i<60;i++)particles.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-0.5)*0.4,vy:-Math.random()*0.5-0.2,size:Math.random()*3+1,life:Math.random(),dlife:Math.random()*0.005+0.003,col:['#e8c07a','#fff','#c07ae8','#e87ab0'][Math.floor(Math.random()*4)],type:Math.random()<0.4?'star':'dot'});
+    function draw(){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      particles.forEach(p=>{p.x=(p.x+p.vx+cv.width)%cv.width;p.y+=p.vy;if(p.y<-10)p.y=cv.height+10;p.life+=p.dlife;const a=Math.abs(Math.sin(p.life*Math.PI));ctx.globalAlpha=a*0.6;ctx.fillStyle=p.col;if(p.type==='star')drawStar(ctx,p.x,p.y,4,p.size,p.size/2);else{ctx.beginPath();ctx.arc(p.x,p.y,p.size/2,0,Math.PI*2);ctx.fill();}});
+      ctx.globalAlpha=1;raf=requestAnimationFrame(draw);}draw();
+  } else if(type==='blossom'){
+    for(let i=0;i<35;i++)particles.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-0.5)*0.6,vy:Math.random()*0.5+0.3,rot:Math.random()*Math.PI*2,drot:(Math.random()-0.5)*0.03,size:Math.random()*5+4,col:['#e87ab0','#f4a8c8','#e8c07a','#ffd6e8','#c07ae8'][Math.floor(Math.random()*5)],swing:Math.random()*Math.PI*2,swingS:Math.random()*0.02+0.01});
+    function draw(){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      particles.forEach(p=>{p.swing+=p.swingS;p.x+=(p.vx+Math.sin(p.swing)*0.4);p.y+=p.vy;p.rot+=p.drot;if(p.y>cv.height+10){p.y=-10;p.x=Math.random()*cv.width;}ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.globalAlpha=0.18;drawPetal(ctx,p.size,p.col);ctx.restore();});
+      ctx.globalAlpha=1;raf=requestAnimationFrame(draw);}draw();
+  } else if(type==='pixel-lightning'){
+    for(let i=0;i<40;i++)particles.push({x:Math.random()*cv.width,y:Math.random()*cv.height,life:Math.random(),dlife:Math.random()*0.01+0.005,col:['#e8c07a','#7ac0e8','#c07ae8','#fff'][Math.floor(Math.random()*4)],size:Math.floor(Math.random()*3)+2});
+    const minibolts=[];let bt=0;
+    function draw(){
+      ctx.clearRect(0,0,cv.width,cv.height);bt++;
+      if(bt>40){bt=0;const bx=Math.random()*cv.width;const s=[];let cx=bx,cy=0;for(let i=0;i<5;i++){cx+=(Math.random()-0.5)*40;cy+=cv.height/5;s.push({x:cx,y:cy});}minibolts.push({segs:s,life:1,decay:0.12,col:['#e8c07a','#c07ae8','#7ac0e8'][Math.floor(Math.random()*3)]});}
+      for(let i=minibolts.length-1;i>=0;i--){const b=minibolts[i];ctx.globalAlpha=b.life*0.5;ctx.strokeStyle=b.col;ctx.lineWidth=1;ctx.shadowBlur=6;ctx.shadowColor=b.col;ctx.beginPath();ctx.moveTo(b.segs[0].x,0);b.segs.forEach(s=>ctx.lineTo(s.x,s.y));ctx.stroke();ctx.shadowBlur=0;b.life-=b.decay;if(b.life<=0)minibolts.splice(i,1);}
+      particles.forEach(p=>{p.life+=p.dlife;const a=Math.abs(Math.sin(p.life*Math.PI))*0.5;ctx.globalAlpha=a;ctx.fillStyle=p.col;ctx.fillRect(p.x,p.y,p.size,p.size);});
+      ctx.globalAlpha=1;raf=requestAnimationFrame(draw);}draw();
+  } else if(type==='float-orbs'){
+    for(let i=0;i<25;i++)particles.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*18+6,life:Math.random()*Math.PI*2,dlife:Math.random()*0.015+0.005,col:['#e8c07a22','#c07ae822','#7ac0e822','#e87ab022'][Math.floor(Math.random()*4)]});
+    function draw(){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      particles.forEach(p=>{p.x=(p.x+p.vx+cv.width)%cv.width;p.y=(p.y+p.vy+cv.height)%cv.height;p.life+=p.dlife;ctx.globalAlpha=Math.abs(Math.sin(p.life))*0.4;ctx.beginPath();const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);g.addColorStop(0,p.col.replace('22','66'));g.addColorStop(1,p.col.replace('22','00'));ctx.fillStyle=g;ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});
+      ctx.globalAlpha=1;raf=requestAnimationFrame(draw);}draw();
+  }
+  slideEffects[id]={stop:()=>cancelAnimationFrame(raf)};
+}
+function drawStar(ctx,x,y,pts,r1,r2){ctx.beginPath();for(let i=0;i<pts*2;i++){const r=i%2===0?r1:r2;const a=(i/pts)*Math.PI-Math.PI/2;i===0?ctx.moveTo(x+r*Math.cos(a),y+r*Math.sin(a)):ctx.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));}ctx.closePath();ctx.fill();}
+function drawPetal(ctx,size,col){ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(0,-size/2,size/2,size,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(size/3,-size/3,size/2,size,Math.PI/3,0,Math.PI*2);ctx.globalAlpha*=0.6;ctx.fill();}
+
+/* ── SLIDE NAV ── */
+const TOTAL=7;let cur=0;
+const slideEffectMap={1:'sparkle',2:'blossom',3:'float-orbs',4:'pixel-lightning',6:'blossom',7:'sparkle'};
+function buildNavDots(){
+  const nd=document.getElementById('navDots');nd.innerHTML='';
+  for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='ndot'+(i===cur?' active':'');d.onclick=(()=>{const idx=i;return()=>goSlide(idx);})();nd.appendChild(d);}
+}
+function goSlide(n){
+  document.getElementById('s'+(cur+1)).classList.remove('active');cur=n;
+  const el=document.getElementById('s'+(cur+1));el.classList.add('active');
+  document.getElementById('prevBtn').disabled=cur===0;
+  document.getElementById('nextBtn').disabled=cur===TOTAL-1;
+  buildNavDots();
+  if(cur===1)buildChaatArt();
+  if(cur===4)initPingPong();
+  if(cur===5)revealPoem();
+  const type=slideEffectMap[cur+1];if(type)initSlideCanvas(cur+1,type);
+}
+function changeSlide(d){goSlide(Math.max(0,Math.min(TOTAL-1,cur+d)));}
+
+/* ── CHAAT PIXEL ART ── */
+function buildChaatArt(){
+  const el=document.getElementById('chaatArt');if(el.children.length>0)return;
+  const map=["00000000000000","00033300333000","00355553355300","03555555555530","03577557755530","03555555555530","00355555555300","00033355533000","00000333330000"];
+  const palette={'0':'transparent','3':'#c07a40','5':'#e8a060','7':'#fff0d0'};
+  el.style.gridTemplateColumns=`repeat(${map[0].length},10px)`;
+  map.forEach(row=>[...row].forEach(c=>{const p=document.createElement('div');p.className='px';p.style.background=palette[c]||'transparent';el.appendChild(p);}));
+}
+
+/* ── POEM REVEAL ── */
+function revealPoem(){
+  const lines=document.querySelectorAll('#s6 .poem-line');
+  lines.forEach((l,i)=>setTimeout(()=>l.classList.add('revealed'),i*120));
+}
+
+/* ══════════════════════════════════════════
+   PING PONG GAME
+══════════════════════════════════════════ */
+let ppCanvas, ppCtx, ppRaf, ppRunning=false, ppOver=false;
+const PW=460, PH=280;
+
+// paddle
+const pad = {x:180, y:PH-18, w:80, h:10, speed:11, col:'#e8c07a'};
+
+// ball
+const ball = {x:PW/2, y:PH/2, r:13, vx:3.5, vy:-3.5, emoji:'🎂'};
+
+let ppScore=0, ppBest=0, ppKeys={};
+
+function initPingPong(){
+  if(ppCanvas) return;
+  ppCanvas = document.getElementById('pp-canvas');
+  ppCtx = ppCanvas.getContext('2d');
+
+  ppCanvas.addEventListener('click', ()=>{ if(!ppRunning && !ppOver) ppStart(); else if(ppOver) ppReset(); });
+  ppCanvas.addEventListener('touchstart', e=>{
+    e.preventDefault();
+    if(!ppRunning && !ppOver){ ppStart(); return; }
+    if(ppOver){ ppReset(); return; }
+    const r=ppCanvas.getBoundingClientRect();
+    const tx=(e.touches[0].clientX-r.left)*(PW/r.width);
+    if(tx < PW/2) ppKeys['ArrowLeft']=true; else ppKeys['ArrowRight']=true;
+  },{passive:false});
+  ppCanvas.addEventListener('touchend',()=>{ ppKeys['ArrowLeft']=false; ppKeys['ArrowRight']=false; });
+  document.addEventListener('keydown', e=>{ ppKeys[e.key]=true; });
+  document.addEventListener('keyup',   e=>{ ppKeys[e.key]=false; });
+
+  ppDrawIdle();
+}
+
+function ppDrawIdle(){
+  if(!ppCtx) return;
+  ppCtx.fillStyle='#0a0a0a'; ppCtx.fillRect(0,0,PW,PH);
+  ppCtx.fillStyle='#333'; ppCtx.font='13px DM Sans,sans-serif'; ppCtx.textAlign='center';
+  ppCtx.fillText('tap or press start 🏓', PW/2, PH/2);
+}
+
+function ppStart(){
+  if(ppRaf) cancelAnimationFrame(ppRaf);
+  ppScore=0; ppOver=false; ppRunning=true;
+  // reset ball
+  ball.x=PW/2; ball.y=PH/2;
+  const angle=(Math.random()*60-30)*(Math.PI/180);
+  const spd=4.2;
+  ball.vx=spd*Math.sin(angle)*(Math.random()<0.5?1:-1);
+  ball.vy=-spd;
+  // reset paddle
+  pad.x=(PW-pad.w)/2;
+
+  document.getElementById('ppscore').textContent='0';
+  document.getElementById('pphint').textContent='← → arrow keys or tap sides · miss = game over';
+  ppLoop();
+}
+
+function ppReset(){
+  if(ppRaf) cancelAnimationFrame(ppRaf);
+  ppRunning=false; ppOver=false; ppScore=0;
+  document.getElementById('ppscore').textContent='0';
+  document.getElementById('pphint').textContent='tap canvas or press start';
+  ppDrawIdle();
+}
+
+function ppLoop(){
+  ppUpdate();
+  ppDraw();
+  if(ppRunning) ppRaf=requestAnimationFrame(ppLoop);
+}
+
+function ppUpdate(){
+  // move paddle
+  if(ppKeys['ArrowLeft'])  pad.x=Math.max(0, pad.x-pad.speed);
+  if(ppKeys['ArrowRight']) pad.x=Math.min(PW-pad.w, pad.x+pad.speed);
+
+  // move ball
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+
+  // wall bounces left/right
+  if(ball.x - ball.r < 0){ ball.x=ball.r; ball.vx=Math.abs(ball.vx); }
+  if(ball.x + ball.r > PW){ ball.x=PW-ball.r; ball.vx=-Math.abs(ball.vx); }
+
+  // ceiling bounce
+  if(ball.y - ball.r < 0){ ball.y=ball.r; ball.vy=Math.abs(ball.vy); }
+
+  // paddle collision
+  if(
+    ball.vy > 0 &&
+    ball.y + ball.r >= pad.y &&
+    ball.y + ball.r <= pad.y + pad.h + 4 &&
+    ball.x >= pad.x - 4 &&
+    ball.x <= pad.x + pad.w + 4
+  ){
+    // angle based on hit position
+    const hitPos = (ball.x - (pad.x + pad.w/2)) / (pad.w/2);
+    const angle = hitPos * 55 * (Math.PI/180);
+    const spd = Math.min(Math.sqrt(ball.vx*ball.vx+ball.vy*ball.vy)+0.12, 9);
+    ball.vx = spd * Math.sin(angle);
+    ball.vy = -spd * Math.cos(angle);
+    ball.y = pad.y - ball.r - 1;
+    ppScore++;
+    document.getElementById('ppscore').textContent=ppScore;
+    if(ppScore > ppBest){
+      ppBest=ppScore;
+      document.getElementById('ppbest').textContent=ppBest;
+    }
+  }
+
+  // ball falls below paddle — GAME OVER
+  if(ball.y - ball.r > PH){
+    ppRunning=false;
+    ppOver=true;
+    ppDrawGameOver();
+    document.getElementById('pphint').textContent='tap canvas to try again';
+  }
+}
+
+function ppDraw(){
+  ppCtx.fillStyle='#0a0a0a';
+  ppCtx.fillRect(0,0,PW,PH);
+
+  // dashed centre line
+  ppCtx.setLineDash([6,8]);
+  ppCtx.strokeStyle='#1f1f1f';
+  ppCtx.lineWidth=1;
+  ppCtx.beginPath();
+  ppCtx.moveTo(0,PH/2);
+  ppCtx.lineTo(PW,PH/2);
+  ppCtx.stroke();
+  ppCtx.setLineDash([]);
+
+  // ball emoji
+  ppCtx.font=`${ball.r*2}px serif`;
+  ppCtx.textAlign='center';
+  ppCtx.textBaseline='middle';
+  ppCtx.fillText('🎂', ball.x, ball.y);
+
+  // paddle — glowing gold bar
+  ppCtx.shadowBlur=14;
+  ppCtx.shadowColor='#e8c07a';
+  ppCtx.fillStyle=pad.col;
+  ppCtx.beginPath();
+  ppCtx.roundRect(pad.x, pad.y, pad.w, pad.h, 5);
+  ppCtx.fill();
+  ppCtx.shadowBlur=0;
+
+  // score top-left
+  ppCtx.fillStyle='#444';
+  ppCtx.font='10px monospace';
+  ppCtx.textAlign='left';
+  ppCtx.textBaseline='alphabetic';
+  ppCtx.fillText('score '+ppScore, 10, 18);
+  ppCtx.fillStyle='#333';
+  ppCtx.fillText('best '+ppBest, 10, 32);
+}
+
+function ppDrawGameOver(){
+  ppCtx.fillStyle='#0a0a0a'; ppCtx.fillRect(0,0,PW,PH);
+  // overlay box
+  ppCtx.fillStyle='#141414';
+  ppCtx.beginPath(); ppCtx.roundRect(PW/2-120,PH/2-65,240,130,12); ppCtx.fill();
+  ppCtx.strokeStyle='#2a2a2a'; ppCtx.lineWidth=0.5; ppCtx.stroke();
+  // text
+  ppCtx.textAlign='center';
+  ppCtx.fillStyle='#e84040'; ppCtx.font='bold 14px DM Sans,sans-serif';
+  ppCtx.fillText('GAME OVER 💔', PW/2, PH/2-32);
+  ppCtx.fillStyle='#888'; ppCtx.font='11px DM Sans,sans-serif';
+  ppCtx.fillText('score: '+ppScore, PW/2, PH/2-8);
+  ppCtx.fillStyle='#e8c07a'; ppCtx.font='11px DM Sans,sans-serif';
+  ppCtx.fillText('best: '+ppBest, PW/2, PH/2+14);
+  ppCtx.fillStyle='#444'; ppCtx.font='10px DM Sans,sans-serif';
+  ppCtx.fillText('tap to play again', PW/2, PH/2+42);
+}
+
+/* ── INIT ── */
+buildNavDots();
+initSlideCanvas(1,'sparkle');
+
+/* ── LOCK / UNLOCK ── */
+function unlockSite(){
+  const val=document.getElementById("unlockInput").value;
+  if(val==="bunnie"){
+    document.getElementById("lockScreen").style.display="none";
+    const s=document.getElementById("surpriseScreen");
+    s.style.display="flex";
+    launchConfetti();
+    setTimeout(()=>{s.style.display="none";},2500);
+  } else {
+    document.getElementById("lockMsg").innerText="wrong password 😛";
+  }
+}
+
+function launchConfetti(){
+  const duration=1500;const end=Date.now()+duration;
+  const colors=['#e8c07a','#ffffff','#ff6b6b','#6bffb8'];
+  (function frame(){
+    for(let i=0;i<6;i++){
+      const div=document.createElement('div');
+      div.style.cssText=`position:fixed;width:6px;height:6px;background:${colors[Math.floor(Math.random()*colors.length)]};left:${Math.random()*100}vw;top:-10px;z-index:9999;border-radius:2px;`;
+      document.body.appendChild(div);
+      let t=parseFloat(div.style.top);
+      let fall=setInterval(()=>{t+=4;div.style.top=t+'px';if(t>window.innerHeight){clearInterval(fall);div.remove();}},16);
+    }
+    if(Date.now()<end)requestAnimationFrame(frame);
+  })();
+}
+
+document.getElementById("unlockInput").addEventListener("keypress",e=>{if(e.key==="Enter")unlockSite();});
+</script>
+</body>
+</html>
